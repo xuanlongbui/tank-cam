@@ -126,7 +126,6 @@
       obj.speed2 = sliderValue;
       document.getElementById("textSliderValue2").innerHTML = "Motor2: "+ sliderValue;
     }
-    window.onload = document.getElementById("photo").src = window.location.href.slice(0, -1) + ":81/stream";
   </script>
   <img src="" id="photo" >
   <p><span id="textSliderValue1" class="noselect"> Motor1: 50</span></p>
@@ -154,6 +153,8 @@
           ontouchend="driectControl('stop');">Backward</button></td>
     </tr>
   </table>
+  <script>
+  window.onload = document.getElementById("photo").src = "http://tankServer.local:81/stream";
+  </script>
 </body>
-
 </html>
