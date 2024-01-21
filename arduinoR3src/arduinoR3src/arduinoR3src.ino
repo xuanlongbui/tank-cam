@@ -114,16 +114,22 @@ void dataHandle(String input) {
   }
 
 }
-
+bool readingProcess = false;
 void loop() {
   while (Serial.available()) {
     character = Serial.read();
-    content.concat(character);
+    if (character == '{') {
+      readingProcess = true;
+    }
+    if(readingProcess == true){
+      content.concat(character);
+    }
   }
     if (content != "" && character == '\n') {
       Serial.println(content);
       dataHandle(content);
       Serial.flush();
+      readingProcess =false;
       content = "";
       motorHandle();
     }

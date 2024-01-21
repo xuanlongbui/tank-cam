@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 #include <ESPmDNS.h>
-#include <SPIFFS.h>
+// #include <SPIFFS.h>
 #include <WiFi.h>
 #include "esp_camera.h"
 #include <ArduinoJson.h>
@@ -332,8 +332,11 @@ void uart_cmd(String msg_input){
       //
     }
     docOut["direct"] = direction;
-    docOut["speed1"] = doc["speed1"];
-    docOut["speed2"] = doc["speed2"];
+    String c_speed1 = doc["speed1"];
+    String c_speed2 = doc["speed2"];
+
+    docOut["speed1"] = c_speed1.toInt() ;
+    docOut["speed2"] = c_speed1.toInt();
 
     serializeJson(docOut, Serial);
     Serial.println();
@@ -429,7 +432,7 @@ void setup()
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector
   Serial.begin(9600);
   Serial.setDebugOutput(true);
-  SPIFFS.begin();
+  // SPIFFS.begin();
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
