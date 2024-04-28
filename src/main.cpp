@@ -51,6 +51,7 @@ StaticJsonDocument<200> doc;
 StaticJsonDocument<200> docOut;
 
 static const char PROGMEM INDEX_HTML[] = R"rawliteral(
+
 <html>
 
 <head>
@@ -60,7 +61,7 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
       touch-action: manipulation;
     }
 
-    *{
+    * {
       -webkit-touch-callout: none;
       /* iOS Safari */
       -webkit-user-select: none;
@@ -101,7 +102,8 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
       text-decoration: none;
       display: inline-block;
       font-size: 18px;
-      margin: 6px 3px;
+      margin: 6px 6px;
+      text-align: center;
       cursor: pointer;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
@@ -112,36 +114,43 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
       -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     }
 
-    .slider {
-      -webkit-appearance: none;
-      margin: 14px;
-      width: 360px;
-      height: 25px;
-      background: #FFD65C;
-      outline: none;
-      -webkit-transition: .2s;
-      transition: opacity .2s;
+    .button_speed {
+      background-color: #2f4468;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      position: relative;
+      right: 50%;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 18px;
+      text-align: center;
     }
 
-    .slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 35px;
-      height: 35px;
-      background: #003249;
-      cursor: pointer;
+
+    .container {
+      display: grid;
+      margin: 0 auto;
+      max-width: fit-content;
+      grid-template-columns: 10% 80% 10%;
+
+    }
+    .speed-indicator {
+        flex-grow: 1;
+        height: 10px;
+        background: #ccc;
+        margin: 0 10px;
     }
 
-    .slider::-moz-range-thumb {
-      width: 35px;
-      height: 35px;
-      background: #003249;
-      cursor: pointer;
+    .noselect {
+      max-width: 200px;
     }
-    img {  width: auto ;
-        max-width: 100% ;
-        height: auto ; 
-      }
+    img {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+    }
   </style>
 </head>
 
@@ -157,36 +166,63 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
       console.log(obj);
 
       try {
-          const response = await fetch("http://tankServer.local/control", {
-            method: "POST",
-            body: JSON.stringify(obj),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-        } catch (error) {
-          alert("Request failed - check the console");
-          console.error(error);
-        }
+        const response = await fetch("http://tankServer.local/control", {
+          method: "POST",
+          body: JSON.stringify(obj),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        alert("Request failed - check the console");
+        console.error(error);
+      }
     }
-    function speedControl1() {
-      var sliderValue = document.getElementById("pwmSlider1").value;
-      obj.speed1 = sliderValue;
-      document.getElementById("textSliderValue1").innerHTML = "Motor1: "+ sliderValue;
+    function speedControl1(param1) {
+      let speed  = obj.speed1 + param1;
+      if (speed >= 0 && speed <= 255) {
+        obj.speed1 += param1;
+      }
+        document.getElementById("textSliderValue1").innerHTML = "MOTOR 1: " + obj.speed1;
     }
-    function speedControl2() {
-      var sliderValue = document.getElementById("pwmSlider2").value;
-      obj.speed2 = sliderValue;
-      document.getElementById("textSliderValue2").innerHTML = "Motor2: "+ sliderValue;
+    function speedControl2(param2) {
+      let speed  = obj.speed2 + param2;
+      if (speed >= 0 && speed <= 255) {
+        obj.speed2 += param2;
+        
+      }
+      document.getElementById("textSliderValue2").innerHTML = "MOTOR 2: " + obj.speed2;
     }
+
   </script>
-  <img src="" id="photo" >
-  <p><span id="textSliderValue1" class="noselect"> Motor1: 50</span></p>
-  <p><input type="range" onchange="speedControl1()" id="pwmSlider1" min="0" max="255" value="50" step="1"
-      class="slider"></p>
-  <p><span id="textSliderValue2" class="noselect"> Motor2: 50</span></p>
-  <p><input type="range" onchange="speedControl2()" id="pwmSlider2" min="0" max="255" value="50" step="1"
-      class="slider"></p>
+  <img src="" id="photo">
+  <div class="container">
+    <div>
+      <button class="button_speed"  ontouchstart="speedControl1(-5)" >-</button>
+    </div>
+    <div class="noselect">
+      <p><span id="textSliderValue1" > MOTOR 1: 50</span></p>
+    </div>
+
+    <div>
+      <button class="button_speed" id="speed-up" ontouchstart="speedControl1(5)">+</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div>
+      <button class="button_speed"  ontouchstart="speedControl2(-5)" >-</button>
+    </div>
+    <div class="noselect">
+      <p><span id="textSliderValue2" > MOTOR 2: 50</span></p>
+    </div>
+
+    <div>
+      <button class="button_speed" id="speed-up" ontouchstart="speedControl2(5)">+</button>
+    </div>
+
+  </div>
+
   <table>
     <tr>
       <td colspan="3" align="center"><button class="button" onmousedown="driectControl('forward');"
@@ -196,7 +232,7 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
     <tr>
       <td align="center"><button class="button" ontouchstart="driectControl('left');"
           ontouchend="driectControl('stop');">Left</button></td>
-      <td align="center"><button class="button" onmousedown="driectControl('stop');"
+      <td align="center"><button class="button" ontouchstart="driectControl('stop');"
           ontouchstart="driectControl('stop');">Stop</button></td>
       <td align="center"><button class="button" ontouchstart="driectControl('right');"
           ontouchend="driectControl('stop');">Right</button></td>
@@ -207,13 +243,19 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
     </tr>
   </table>
   <script>
-  window.onload = document.getElementById("photo").src = "http://tankServer.local:81/stream";
+    window.onload = document.getElementById("photo").src = "http://tankServer.local:81/stream";
   </script>
 </body>
+
 </html>
 )rawliteral";
 
-static esp_err_t index_handler(httpd_req_t *req)
+static esp_err_t config_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  return httpd_resp_send(req, (const char *)INDEX_HTML, strlen(INDEX_HTML));
+}
+static esp_err_t control_handler(httpd_req_t *req)
 {
   httpd_resp_set_type(req, "text/html");
   return httpd_resp_send(req, (const char *)INDEX_HTML, strlen(INDEX_HTML));
@@ -336,7 +378,7 @@ void uart_cmd(String msg_input){
     String c_speed2 = doc["speed2"];
 
     docOut["speed1"] = c_speed1.toInt() ;
-    docOut["speed2"] = c_speed1.toInt();
+    docOut["speed2"] = c_speed2.toInt();
 
     serializeJson(docOut, Serial);
     Serial.println();
@@ -398,10 +440,15 @@ void startCameraServer()
 {
   httpd_config_t config = HTTPD_DEFAULT_CONFIG();
   config.server_port = 80;
-  httpd_uri_t index_uri = {
-      .uri = "/",
+  httpd_uri_t config_uri = {
+      .uri = "/configuration",
       .method = HTTP_GET,
-      .handler = index_handler,
+      .handler = config_handler,
+      .user_ctx = NULL};
+  httpd_uri_t controller_uri = {
+      .uri = "/controller",
+      .method = HTTP_GET,
+      .handler = control_handler,
       .user_ctx = NULL};
 
   httpd_uri_t cmd_uri = {
@@ -416,7 +463,8 @@ void startCameraServer()
       .user_ctx = NULL};
   if (httpd_start(&camera_httpd, &config) == ESP_OK)
   {
-    httpd_register_uri_handler(camera_httpd, &index_uri);
+    httpd_register_uri_handler(camera_httpd, &config_uri);
+    httpd_register_uri_handler(camera_httpd, &controller_uri);
     httpd_register_uri_handler(camera_httpd, &cmd_uri);
   }
   config.server_port += 1;

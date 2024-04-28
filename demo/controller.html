@@ -2,107 +2,13 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <style>
-    * {
-      touch-action: manipulation;
-    }
-
-    * {
-      -webkit-touch-callout: none;
-      /* iOS Safari */
-      -webkit-user-select: none;
-      /* Safari */
-      -khtml-user-select: none;
-      /* Konqueror HTML */
-      -moz-user-select: none;
-      /* Old versions of Firefox */
-      -ms-user-select: none;
-      /* Internet Explorer/Edge */
-      user-select: none;
-      /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-    }
-
-    body {
-      font-family: Arial;
-      text-align: center;
-      margin: 0px auto;
-      padding-top: 30px;
-    }
-
-    table {
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    td {
-      padding: 8 px;
-    }
-
-    .button {
-      background-color: #2f4468;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 18px;
-      margin: 6px 6px;
-      text-align: center;
-      cursor: pointer;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    }
-
-    .button_speed {
-      background-color: #2f4468;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      position: relative;
-      right: 50%;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 18px;
-      text-align: center;
-    }
-
-
-    .container {
-      display: grid;
-      margin: 0 auto;
-      max-width: fit-content;
-      grid-template-columns: 10% 80% 10%;
-
-    }
-    .speed-indicator {
-        flex-grow: 1;
-        height: 10px;
-        background: #ccc;
-        margin: 0 10px;
-    }
-
-    .noselect {
-      max-width: 200px;
-    }
-    img {
-      width: auto;
-      max-width: 100%;
-      height: auto;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
   <script>
     let obj = {
+      "type":"control",
       'direct': 'stop',
       'speed1': 50,
       'speed2': 50
@@ -126,14 +32,14 @@
     }
     function speedControl1(param1) {
       let speed  = obj.speed1 + param1;
-      if (speed2 >= 0 && speed2 <= 255) {
+      if (speed >= 0 && speed <= 255) {
         obj.speed1 += param1;
       }
         document.getElementById("textSliderValue1").innerHTML = "MOTOR 1: " + obj.speed1;
     }
     function speedControl2(param2) {
-      let speed2  = obj.speed2 + param2;
-      if (speed2 >= 0 && speed2 <= 255) {
+      let speed  = obj.speed2 + param2;
+      if (speed >= 0 && speed <= 255) {
         obj.speed2 += param2;
         
       }
@@ -141,6 +47,10 @@
     }
 
   </script>
+    <ul>
+      <li><a href="http://tankServer.local/configuration">Configuration</a></li>
+      <li><a class="active" href="http://tankServer.local/controller">Controller</a></li>
+    </ul>
   <img src="" id="photo">
   <div class="container">
     <div>

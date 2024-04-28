@@ -1,65 +1,84 @@
 #include <Arduino_JSON.h>
+#include<Servo.h>           //Include The servo library for the functions used
+
+Servo esc1;                  //Declare the ESC as a Servo Object
+Servo esc2;                  //Declare the ESC as a Servo Object
 
 #define STOP 0
 #define FORWARD 1
 #define BACKWARD 2
 #define RIGHT 3
 #define LEFT 4
+
+#define MIN_VAL  30
+#define START_VAL 150
+#define START_DELAY 300 //ms
+
 int direct = 0;
 //motor A
-const int APin1 = 2;
 const int PWMA = 3;
-const int APin2 = 4;
 int speed1 = 0;
+int val1;    // variable to read the value from the analog pin
+int val2;    // variable to read the value from the analog pin
 //Motor B
-const int BPin1 = 5;
-const int PWMB = 6;
-const int BPin2 = 7;
+const int PWMB = 5;
 int speed2 = 0;
 //This will run only one time.
 String content = "";
 char character;
 
 void forward() {
-  digitalWrite(APin1, 0);
-  digitalWrite(APin2, 1);
-  digitalWrite(BPin1, 0);
-  digitalWrite(BPin2, 1);
+  esc1.write(START_VAL);                  // sets the servo position according to the scaled value
+  esc2.write(START_VAL);                  // sets the servo position according to the scaled value
+
+  delay(START_DELAY);          
+  val1 = map(speed1, 0, 255, MIN_VAL, 180);     // scale it for use with the servo (value between 0 and 180)
+  esc1.write(val1);                  // sets the servo position according to the scaled value
+  
+  val2 = map(speed2, 0, 255, MIN_VAL, 180);     // scale it for use with the servo (value between 0 and 180)
+  esc2.write(val2);                  // sets the servo position according to the scaled value
+  delay(15);                           // waits for the servo to get there
 }
 void backward() {
-  digitalWrite(APin1, 1);
-    digitalWrite(APin2, 0);
-  digitalWrite(BPin1, 1);
-  digitalWrite(BPin2, 0);
+  esc1.write(0);                  // sets the servo position according to the scaled value
+
+  esc2.write(0);                  // sets the servo position according to the scaled value
+  delay(15);                           // waits for the servo to get there
 }
+
 void left() {
-  digitalWrite(APin1, 1);
-    digitalWrite(APin2, 0);
-  digitalWrite(BPin1, 0);
-  digitalWrite(BPin2, 1);
+  esc1.write(START_VAL);                  // sets the servo position according to the scaled value
+  esc2.write(0);                  // sets the servo position according to the scaled value   
+  delay(START_DELAY);          
+
+  val1 = map(speed1, 0, 255, MIN_VAL, 180);     // scale it for use with the servo (value between 0 and 180)
+  esc1.write(val1);                  // sets the servo position according to the scaled value 
+
+  delay(15);    
 }
 void right() {
-  digitalWrite(APin1, 0);
-    digitalWrite(APin2, 1);
-  digitalWrite(BPin1, 1);
-  digitalWrite(BPin2, 0);
+  esc1.write(0);                  // sets the servo position according to the scaled value
+  esc2.write(START_VAL);                  // sets the servo position according to the scaled value
+  delay(START_DELAY);          
+  val2 = map(speed2, 0, 255, MIN_VAL, 180);     // scale it for use with the servo (value between 0 and 180)
+  esc2.write(val2);                  // sets the servo position according to the scaled value
+  delay(15);    
 }
 void stop() {
-  digitalWrite(APin1, 0);
-    digitalWrite(APin2, 0);
-  digitalWrite(BPin1, 0);
-  digitalWrite(BPin2, 0);
+  esc1.write(0);                  // sets the servo position according to the scaled value
+  esc2.write(0);                  // sets the servo position according to the scaled value
+  delay(500);                           // waits for the servo to get there
+  esc1.write(MIN_VAL);                  // sets the servo position according to the scaled value
+  esc2.write(MIN_VAL);                  // sets the servo position according to the scaled value
 }
 void setup() {
   Serial.begin(9600);
   while (!Serial);
-  //Set pins as outputs
-  pinMode(APin1, OUTPUT);
-  pinMode(PWMA, OUTPUT);
-  pinMode(APin2, OUTPUT);
-  pinMode(BPin1, OUTPUT);
-  pinMode(PWMB, OUTPUT);
-  pinMode(BPin2, OUTPUT);
+  esc1.attach(PWMA);  // attaches the servo 
+  esc2.attach(PWMB);  // attaches the servo
+  esc1.write(MIN_VAL);                  // sets the servo position according to the scaled value
+  esc2.write(MIN_VAL);                  // sets the servo position according to the scaled value
+  delay(15);
 }
 void motorHandle() {
   switch (direct) {

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <script>
+    async function submitConfig() {
+      let obj = {
+        "type":"config",
+        "motor1":{
+          "init_val": Number(document.getElementById("init_val_1").value),
+          "stand_by_value": document.getElementById("stand_by_val_1").value,
+          "init_time":document.getElementById("init_time_1").value,
+          "pin":document.getElementById("pin_1").value
+        },
+        "motor2":{
+          "init_val": document.getElementById("init_val_2").value,
+          "stand_by_value": document.getElementById("stand_by_val_2").value,
+          "init_time":document.getElementById("init_time_2").value,
+          "pin":document.getElementById("pin_2").value
+        }
+      }
+      console.log(obj);
+      try {
+        const response = await fetch("http://tankServer.local/config", {
+          method: "POST",
+          body: JSON.stringify(obj),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        alert("Request failed - check the console");
+        console.error(error);
+      }
+    }
+  </script>
+  <ul>
+    <li><a class="active" href="http://tankServer.local/configuration">Configuration</a></li>
+    <li><a href="http://tankServer.local/controller">Controller</a></li>
+  </ul>
+  <table>
+    <tr>
+      <td class="title"> MOTOR 1 </td>
+      <td class="title"> MOTOR 2 </td>
+    </tr>
+    <table></table>
+    <table>
+      <tr>
+        <td class="cl_title"> Initial value 1: </td>
+        <td> <input type="number" id="init_val_1" placeholder="150" min="0" max="180" value="150"> </td>
+        <td class="cl_title"> Initial value 2: </td>
+        <td> <input type="number" id="init_val_2" placeholder="150" min="0" max="180" value="150"> </td>
+      </tr>
+      <tr>
+        <td> Stand by value 1:</td>
+        <td> <input type="number" id="stand_by_val_1" placeholder="20" min="0" max="180" value="20"> </td>
+        <td> Stand by value 2:</td>
+        <td> <input type="number" id="stand_by_val_2" placeholder="20" min="0" max="180" value="20"> </td>
+      </tr>
+      <tr>
+        <td> Launch delay (ms) 1:</td>
+        <td> <input type="number" id="init_time_1" placeholder="200" min="0" max="500" value="200"> </td>
+        <td> Launch delay (ms) 2: </td>
+        <td> <input type="number" id="init_time_2" placeholder="200" min="0" max="500" value="200"> </td>
+      </tr>
+      <tr>
+        <td>Pin motor 1: </td>
+        <td> <input type="number" id="pin_1" placeholder="3" min="0" max="80" value="3"> </td>
+        <td>Pin motor 2: </td>
+        <td> <input type="number" id="pin_2" placeholder="5" min="0" max="80" value="3"> </td>
+      </tr>
+    </table>
+    <div id="bt">
+      <button class="button" onclick="submitConfig()">Submit</button>
+    </div>
+
+</body>
+
+</html>
