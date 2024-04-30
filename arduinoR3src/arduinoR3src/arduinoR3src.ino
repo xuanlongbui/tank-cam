@@ -14,12 +14,19 @@ Servo esc2;                  //Declare the ESC as a Servo Object
 #define START_VAL 150
 #define START_DELAY 300 //ms
 
+int stand_by_val1 = 20;
+int stand_by_val2 = 20;
+
+int init_val1 = 150;
+int init_val2 = 150;
+
+int init_time1 = 200;
+int init_time2 = 200;
+
 int direct = 0;
 //motor A
 const int PWMA = 3;
 int speed1 = 0;
-int val1;    // variable to read the value from the analog pin
-int val2;    // variable to read the value from the analog pin
 //Motor B
 const int PWMB = 5;
 int speed2 = 0;
@@ -28,48 +35,33 @@ String content = "";
 char character;
 
 void forward() {
-  esc1.write(START_VAL);                  // sets the servo position according to the scaled value
-  esc2.write(START_VAL);                  // sets the servo position according to the scaled value
-
-  delay(START_DELAY);          
-  val1 = map(speed1, 0, 255, MIN_VAL, 180);     // scale it for use with the servo (value between 0 and 180)
-  esc1.write(val1);                  // sets the servo position according to the scaled value
-  
-  val2 = map(speed2, 0, 255, MIN_VAL, 180);     // scale it for use with the servo (value between 0 and 180)
-  esc2.write(val2);                  // sets the servo position according to the scaled value
-  delay(15);                           // waits for the servo to get there
+  esc1.write(init_val1);                  // sets the servo position according to the scaled value
+  esc2.write(init_val2);                  // sets the servo position according to the scaled value
+  delay(init_time1);          
+  esc1.write(speed1);                  // sets the servo position according to the scaled value
+  esc2.write(speed2);                  // sets the servo position according to the scaled value
 }
-void backward() {
-  esc1.write(0);                  // sets the servo position according to the scaled value
-
-  esc2.write(0);                  // sets the servo position according to the scaled value
-  delay(15);                           // waits for the servo to get there
+void backward() {                       // waits for the servo to get there
 }
 
 void left() {
-  esc1.write(START_VAL);                  // sets the servo position according to the scaled value
-  esc2.write(0);                  // sets the servo position according to the scaled value   
-  delay(START_DELAY);          
-
-  val1 = map(speed1, 0, 255, MIN_VAL, 180);     // scale it for use with the servo (value between 0 and 180)
-  esc1.write(val1);                  // sets the servo position according to the scaled value 
-
-  delay(15);    
+  esc1.write(init_val1);                  // sets the servo position according to the scaled value
+  esc2.write(0);
+  delay(init_time1);          
+  esc1.write(speed1);                  // sets the servo position according to the scaled value  
 }
 void right() {
   esc1.write(0);                  // sets the servo position according to the scaled value
-  esc2.write(START_VAL);                  // sets the servo position according to the scaled value
-  delay(START_DELAY);          
-  val2 = map(speed2, 0, 255, MIN_VAL, 180);     // scale it for use with the servo (value between 0 and 180)
-  esc2.write(val2);                  // sets the servo position according to the scaled value
-  delay(15);    
+  esc2.write(init_val2);
+  delay(init_time1);          
+  esc2.write(speed2);                  // sets the servo position according to the scaled value    
 }
 void stop() {
   esc1.write(0);                  // sets the servo position according to the scaled value
   esc2.write(0);                  // sets the servo position according to the scaled value
   delay(500);                           // waits for the servo to get there
-  esc1.write(MIN_VAL);                  // sets the servo position according to the scaled value
-  esc2.write(MIN_VAL);                  // sets the servo position according to the scaled value
+  esc1.write(stand_by_val1);                  // sets the servo position according to the scaled value
+  esc2.write(stand_by_val2);                  // sets the servo position according to the scaled value
 }
 void setup() {
   Serial.begin(9600);
@@ -115,22 +107,77 @@ void dataHandle(String input) {
 
   Serial.print("JSON.typeof(myObject) = ");
   Serial.println(JSON.typeof(myObject));  // prints: object
+  
+  if (myObject.hasOwnProperty("type"))
+  {
+    if (strcmp(myObject["type"],"control")==0)
+    {
+        if (myObject.hasOwnProperty("contents"))
+        {
+          if (strcmp(myObject["contents"]["direct"],"forward")==0)
+          {
+            direct = FORWARD;
+          }
+          else if (strcmp(myObject["contents"]["direct"],"backward")==0)
+          {
+            direct = BACKWARD;
+          }
+          else if (strcmp(myObject["contents"]["direct"],"stop")==0)
+          {
+            direct = STOP;
+          }
+          else if (strcmp(myObject["contents"]["direct"],"right")==0)
+          {
+            direct = RIGHT;
+          }
+          else if (strcmp(myObject["contents"]["direct"],"left")==0)
+          {
+            direct = LEFT;
+          }
+          speed1 = (int)myObject["contents"]["speed1"];
+          speed2 = (int)myObject["contents"]["speed2"];
+          
+          Serial.print("[\"direct\"] = ");
+          Serial.println(myObject["contents"]["direct"]);
+          Serial.print("[\"speed1\"] = ");
+          Serial.println(myObject["contents"]["speed1"]);
+          Serial.print("[\"speed2\"] = ");
+          Serial.println(myObject["contents"]["speed2"]);
+        }
+    }
+    else if (strcmp(myObject["type"],"config")==0)
+    {
+          if (myObject.hasOwnProperty("contents"))
+        {
+          stand_by_val1 = (int)myObject["contents"]["motor1"]["stand_by_value"];
+          stand_by_val1 = (int)myObject["contents"]["motor2"]["stand_by_value"];
+          init_val1 = (int) myObject["contents"]["motor1"]["init_val"];
+          init_val2 = (int) myObject["contents"]["motor2"]["init_val"];
+          init_time1 = (int)myObject["contents"]["motor1"]["init_time"];
+          init_time2 = (int)myObject["contents"]["motor2"]["init_time"];
+          Serial.print("[\"init value 1\"] = ");
+          Serial.println(myObject["contents"]["motor1"]["init_val"]);
+          Serial.print("[\"stand_by_value 1\"] = ");
+          Serial.println(myObject["contents"]["motor1"]["stand_by_value"]);
+          Serial.print("[\"init_time 1\"] = ");
+          Serial.println(myObject["contents"]["motor1"]["init_time"]);
+          Serial.print("[\"pin 1\"] = ");
+          Serial.println(myObject["contents"]["motor1"]["pin"]);
 
-  if (myObject.hasOwnProperty("direct")) {
-    Serial.print("myObject[\"direct\"] = ");
-    Serial.println((int)myObject["direct"]);
-    direct = (int)myObject["direct"];
+          Serial.print("[\"init value 2\"] = ");
+          Serial.println(myObject["contents"]["motor2"]["init_val"]);
+          Serial.print("[\"stand_by_value 2\"] = ");
+          Serial.println(myObject["contents"]["motor2"]["stand_by_value"]);
+          Serial.print("[\"init_time 2\"] = ");
+          Serial.println(myObject["contents"]["motor2"]["init_time"]);
+          Serial.print("[\"pin 2\"] = ");
+          Serial.println(myObject["contents"]["motor2"]["pin"]);
+
+        }
+    }
+    
   }
-  if (myObject.hasOwnProperty("speed1")) {
-    Serial.print("myObject[\"speed1\"] = ");
-    Serial.println((int)myObject["speed1"]);
-    speed1 = (int)myObject["speed1"];
-  }
-  if (myObject.hasOwnProperty("speed2")) {
-    Serial.print("myObject[\"speed2\"] = ");
-    Serial.println((int)myObject["speed2"]);
-    speed2 = (int)myObject["speed2"];
-  }
+  
 
 }
 bool readingProcess = false;
