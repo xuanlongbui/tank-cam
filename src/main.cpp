@@ -12,6 +12,7 @@
 #include "soc/soc.h"          // disable brownout problems
 #include "soc/rtc_cntl_reg.h" // disable brownout problems
 #include "esp_http_server.h"
+// #include "SPIFFS.h"
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 // direct control
@@ -51,118 +52,155 @@ StaticJsonDocument<200> doc;
 StaticJsonDocument<200> docOut;
 
 static const char PROGMEM INDEX_HTML[] = R"rawliteral(
-
 <html>
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     * {
-      touch-action: manipulation;
-    }
+    touch-action: manipulation;
+  }
 
-    * {
-      -webkit-touch-callout: none;
-      /* iOS Safari */
-      -webkit-user-select: none;
-      /* Safari */
-      -khtml-user-select: none;
-      /* Konqueror HTML */
-      -moz-user-select: none;
-      /* Old versions of Firefox */
-      -ms-user-select: none;
-      /* Internet Explorer/Edge */
-      user-select: none;
-      /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-    }
+* {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                supported by Chrome, Edge, Opera and Firefox */
+  }
 
-    body {
-      font-family: Arial;
-      text-align: center;
-      margin: 0px auto;
-      padding-top: 30px;
-    }
+  body {
+    font-family: Arial;
+    text-align: center;
+    margin: 0px auto;
+    padding-top: 30px;
+  }
 
-    table {
-      margin-left: auto;
-      margin-right: auto;
-    }
+  table {
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-    td {
-      padding: 8 px;
-    }
+  td {
+    padding: 8 px;
+  }
+input{
+  max-width: 100px;
+}
+  .button {
+    background-color: #2f4468;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    margin: 6px 6px;
+    text-align: center;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
 
-    .button {
-      background-color: #2f4468;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 18px;
-      margin: 6px 6px;
-      text-align: center;
-      cursor: pointer;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    }
-
-    .button_speed {
-      background-color: #2f4468;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      position: relative;
-      right: 50%;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 18px;
-      text-align: center;
-    }
+  .button_speed {
+    background-color: #2f4468;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    position: relative;
+    right: 50%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+  }
 
 
-    .container {
-      display: grid;
-      margin: 0 auto;
-      max-width: fit-content;
-      grid-template-columns: 10% 80% 10%;
+  .container {
+    display: grid;
+    margin: 0 auto;
+    max-width: fit-content;
+    grid-template-columns: 10% 80% 10%;
 
-    }
-    .speed-indicator {
-        flex-grow: 1;
-        height: 10px;
-        background: #ccc;
-        margin: 0 10px;
-    }
+  }
+  .speed-indicator {
+      flex-grow: 1;
+      height: 10px;
+      background: #ccc;
+      margin: 0 10px;
+  }
 
-    .noselect {
-      max-width: 200px;
-    }
-    img {
-      width: auto;
-      max-width: 100%;
-      height: auto;
-    }
+  .noselect {
+    max-width: 200px;
+  }
+  img {
+    width: 352px;
+    max-width: 100%;
+    height: 240px;
+  }
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #e7e7e7;
+    background-color: #f3f3f3;
+    width: 100%;
+    height: 40px;
+  }
+  li {
+    float: left;
+    width: 50%;
+  }
+
+  li a {
+    display: block;
+    color: #666;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+
+  li a:hover:not(.active) {
+    background-color: #ddd;
+    font-size: 14px;
+  }
+
+  li a.active {
+    color: white;
+    background-color: #737b7b;
+    font-size: 14px;
+    
+  }
   </style>
 </head>
 
 <body>
   <script>
     let obj = {
-      'direct': 'stop',
-      'speed1': 50,
-      'speed2': 50
+      "type":"control",
+      "contents":{
+        'direct': 'stop',
+        'speed1': 50,
+        'speed2': 50
+      }
     }
     async function driectControl(param) {
-      obj.direct = param;
+      obj.contents.direct = param;
       console.log(obj);
 
       try {
@@ -179,21 +217,52 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
       }
     }
     function speedControl1(param1) {
-      let speed  = obj.speed1 + param1;
+      let speed  = obj.contents.speed1 + param1;
       if (speed >= 0 && speed <= 255) {
-        obj.speed1 += param1;
+        obj.contents.speed1 += param1;
       }
-        document.getElementById("textSliderValue1").innerHTML = "MOTOR 1: " + obj.speed1;
+        document.getElementById("textSliderValue1").innerHTML = "MOTOR 1: " + obj.contents.speed1;
     }
     function speedControl2(param2) {
-      let speed  = obj.speed2 + param2;
+      let speed  = obj.contents.speed2 + param2;
       if (speed >= 0 && speed <= 255) {
-        obj.speed2 += param2;
+        obj.contents.speed2 += param2;
         
       }
-      document.getElementById("textSliderValue2").innerHTML = "MOTOR 2: " + obj.speed2;
+      document.getElementById("textSliderValue2").innerHTML = "MOTOR 2: " + obj.contents.speed2;
     }
-
+    async function submitConfig() {
+      let obj = {
+        "type":"config",
+        "contents":{
+          "motor1":{
+            "init_val": Number(document.getElementById("init_val_1").value),
+            "stand_by_value": Number(document.getElementById("stand_by_val_1").value),
+            "init_time":Number(document.getElementById("init_time_1").value),
+            "pin":Number(document.getElementById("pin_1").value)
+          },
+          "motor2":{
+            "init_val": Number(document.getElementById("init_val_2").value),
+            "stand_by_value": Number(document.getElementById("stand_by_val_2").value),
+            "init_time":Number(document.getElementById("init_time_2").value),
+            "pin":Number(document.getElementById("pin_2").value)
+          }
+        }
+      }
+      console.log(obj);
+      try {
+        const response = await fetch("http://tankServer.local/config", {
+          method: "POST",
+          body: JSON.stringify(obj),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        alert("Request failed - check the console");
+        console.error(error);
+      }
+    }
   </script>
   <img src="" id="photo">
   <div class="container">
@@ -230,18 +299,51 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
           ontouchend="driectControl('stop');">Forward</button></td>
     </tr>
     <tr>
-      <td align="center"><button class="button" ontouchstart="driectControl('left');"
+      <td ><button class="button" ontouchstart="driectControl('left');"
           ontouchend="driectControl('stop');">Left</button></td>
-      <td align="center"><button class="button" ontouchstart="driectControl('stop');"
+      <td ><button class="button" ontouchstart="driectControl('stop');"
           ontouchstart="driectControl('stop');">Stop</button></td>
-      <td align="center"><button class="button" ontouchstart="driectControl('right');"
+      <td ><button class="button" ontouchstart="driectControl('right');"
           ontouchend="driectControl('stop');">Right</button></td>
     </tr>
     <tr>
-      <td colspan="3" align="center"><button class="button" ontouchstart="driectControl('backward');"
-          ontouchend="driectControl('stop');">Backward</button></td>
     </tr>
   </table>
+  <table>
+    <tr>
+      <td class="title" > MOTOR 1 </td>
+      <td class="title"> MOTOR 2 </td>
+    </tr>
+    <table></table>
+    <table>
+      <tr>
+        <td class="cl_title"> Initial value: </td>
+        <td> <input type="number" id="init_val_1" placeholder="150" min="0" max="180" value="150"> </td>
+        <td class="cl_title"> Initial value: </td>
+        <td> <input type="number" id="init_val_2" placeholder="150" min="0" max="180" value="150"> </td>
+      </tr>
+      <tr>
+        <td> Stand by value:</td>
+        <td> <input type="number" id="stand_by_val_1" placeholder="20" min="0" max="180" value="20"> </td>
+        <td> Stand by value:</td>
+        <td> <input type="number" id="stand_by_val_2" placeholder="20" min="0" max="180" value="20"> </td>
+      </tr>
+      <tr>
+        <td> Launch delay (ms):</td>
+        <td> <input type="number" id="init_time_1" placeholder="200" min="0" max="500" value="200"> </td>
+        <td> Launch delay (ms): </td>
+        <td> <input type="number" id="init_time_2" placeholder="200" min="0" max="500" value="200"> </td>
+      </tr>
+      <tr>
+        <td>Pin motor: </td>
+        <td> <input type="number" id="pin_1" placeholder="3" min="0" max="80" value ="3"> </td>
+        <td>Pin motor: </td>
+        <td> <input type="number" id="pin_2" placeholder="5" min="0" max="80" value="5"> </td>
+      </tr>
+    </table>
+    <div id="bt">
+      <button class="button" onclick="submitConfig()">Submit</button>
+    </div>
   <script>
     window.onload = document.getElementById("photo").src = "http://tankServer.local:81/stream";
   </script>
@@ -250,15 +352,11 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
 </html>
 )rawliteral";
 
-static esp_err_t config_handler(httpd_req_t *req)
-{
-  httpd_resp_set_type(req, "text/html");
-  return httpd_resp_send(req, (const char *)INDEX_HTML, strlen(INDEX_HTML));
-}
 static esp_err_t control_handler(httpd_req_t *req)
 {
   httpd_resp_set_type(req, "text/html");
   return httpd_resp_send(req, (const char *)INDEX_HTML, strlen(INDEX_HTML));
+  // return httpd_resp_send(req, (const char *)ctr.read(), strlen((const char *)ctr.read()));
 }
 static esp_err_t stream_handler(httpd_req_t *req)
 {
@@ -414,6 +512,7 @@ static esp_err_t cmd_handler(httpd_req_t *req)
   }
   else
   {
+    int cnt =0;
     for (int i = 0; i < 100; i++)
     {
       character = content[i];
@@ -424,10 +523,75 @@ static esp_err_t cmd_handler(httpd_req_t *req)
       else
       {
         output_str.concat(character);
-        break;
+        cnt ++;
+        if (cnt == 2 )
+        {
+          break;
+        }
+        
       }
     }
-  uart_cmd(output_str);
+  Serial.println(output_str);
+  // uart_cmd(output_str);
+  }
+
+  /* Send a simple response */
+  const char resp[] = "URI POST Response";
+  httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
+  return ESP_OK;
+}
+static esp_err_t cfg_handler(httpd_req_t *req)
+{
+  /* Destination buffer for content of HTTP POST request.
+   * httpd_req_recv() accepts char* only, but content could
+   * as well be any binary data (needs type casting).
+   * In case of string data, null termination will be absent, and
+   * content length would give length of string */
+  char content[200];
+  int ind_ct = 0;
+  char character;
+  String output_str = "";
+  /* Truncate if content length larger than the buffer */
+  size_t recv_size = MIN(req->content_len, sizeof(content));
+
+  int ret = httpd_req_recv(req, content, recv_size);
+  if (ret <= 0)
+  { /* 0 return value indicates connection closed */
+    /* Check if timeout occurred */
+    if (ret == HTTPD_SOCK_ERR_TIMEOUT)
+    {
+      /* In case of timeout one can choose to retry calling
+       * httpd_req_recv(), but to keep it simple, here we
+       * respond with an HTTP 408 (Request Timeout) error */
+      httpd_resp_send_408(req);
+    }
+    /* In case of error, returning ESP_FAIL will
+     * ensure that the underlying socket is closed */
+    return ESP_FAIL;
+  }
+  else
+  {
+    int cnt =0;
+    for (int i = 0; i < 200; i++)
+    {
+      character = content[i];
+      if (character != '}')
+      {
+        output_str.concat(character);
+      }
+      else
+      {
+        output_str.concat(character);
+        cnt ++;
+        if (cnt == 4 )
+        {
+          break;
+        }
+        
+      }
+    }
+  Serial.println(output_str);
+  // uart_cmd(output_str);
   }
 
   /* Send a simple response */
@@ -440,21 +604,20 @@ void startCameraServer()
 {
   httpd_config_t config = HTTPD_DEFAULT_CONFIG();
   config.server_port = 80;
-  httpd_uri_t config_uri = {
-      .uri = "/configuration",
-      .method = HTTP_GET,
-      .handler = config_handler,
-      .user_ctx = NULL};
-  httpd_uri_t controller_uri = {
-      .uri = "/controller",
+  httpd_uri_t control_uri = {
+      .uri = "/",
       .method = HTTP_GET,
       .handler = control_handler,
       .user_ctx = NULL};
-
   httpd_uri_t cmd_uri = {
       .uri = "/control",
       .method = HTTP_POST,
       .handler = cmd_handler,
+      .user_ctx = NULL};
+  httpd_uri_t config_uri = {
+      .uri = "/config",
+      .method = HTTP_POST,
+      .handler = cfg_handler,
       .user_ctx = NULL};
   httpd_uri_t stream_uri = {
       .uri = "/stream",
@@ -463,8 +626,8 @@ void startCameraServer()
       .user_ctx = NULL};
   if (httpd_start(&camera_httpd, &config) == ESP_OK)
   {
+    httpd_register_uri_handler(camera_httpd, &control_uri);
     httpd_register_uri_handler(camera_httpd, &config_uri);
-    httpd_register_uri_handler(camera_httpd, &controller_uri);
     httpd_register_uri_handler(camera_httpd, &cmd_uri);
   }
   config.server_port += 1;
@@ -480,8 +643,7 @@ void setup()
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector
   Serial.begin(9600);
   Serial.setDebugOutput(true);
-  // SPIFFS.begin();
-  camera_config_t config;
+   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
   config.pin_d0 = Y2_GPIO_NUM;
@@ -528,8 +690,8 @@ void setup()
   WiFi.softAP("ESP-WIFI", NULL);
 
   IPAddress IP = WiFi.softAPIP();
-  // Serial.print("AP IP address: ");
-  // Serial.println(IP);
+  Serial.print("AP IP address: ");
+  Serial.println(IP);
   MDNS.begin("tankServer");
   // Start streaming web server
   startCameraServer();
