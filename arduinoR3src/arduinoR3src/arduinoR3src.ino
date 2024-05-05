@@ -10,10 +10,7 @@ Servo esc2;                  //Declare the ESC as a Servo Object
 #define RIGHT 3
 #define LEFT 4
 
-#define MIN_VAL  30
-#define START_VAL 150
-#define START_DELAY 300 //ms
-
+#define DEBUG 0
 int stand_by_val1 = 20;
 int stand_by_val2 = 20;
 
@@ -68,8 +65,8 @@ void setup() {
   while (!Serial);
   esc1.attach(PWMA);  // attaches the servo 
   esc2.attach(PWMB);  // attaches the servo
-  esc1.write(MIN_VAL);                  // sets the servo position according to the scaled value
-  esc2.write(MIN_VAL);                  // sets the servo position according to the scaled value
+  esc1.write(stand_by_val1);                  // sets the servo position according to the scaled value
+  esc2.write(stand_by_val2);                  // sets the servo position according to the scaled value
   delay(15);
 }
 void motorHandle() {
@@ -93,8 +90,6 @@ void motorHandle() {
       Serial.println("invalid direct");
   }
 
-analogWrite(PWMA,speed1);
-analogWrite(PWMB,speed2);
 }
 void dataHandle(String input) {
   JSONVar myObject = JSON.parse(input);
@@ -102,12 +97,15 @@ void dataHandle(String input) {
   // JSON.typeof(jsonVar) can be used to get the type of the variable
   if (JSON.typeof(myObject) == "undefined") {
     Serial.println("Parsing input failed!");
+    direct = STOP;
+    stop();
     return;
   }
-
+#if DEBUG
   Serial.print("JSON.typeof(myObject) = ");
   Serial.println(JSON.typeof(myObject));  // prints: object
-  
+#endif
+
   if (myObject.hasOwnProperty("type"))
   {
     if (strcmp(myObject["type"],"control")==0)
@@ -136,13 +134,14 @@ void dataHandle(String input) {
           }
           speed1 = (int)myObject["contents"]["speed1"];
           speed2 = (int)myObject["contents"]["speed2"];
-          
+#if DEBUG
           Serial.print("[\"direct\"] = ");
           Serial.println(myObject["contents"]["direct"]);
           Serial.print("[\"speed1\"] = ");
           Serial.println(myObject["contents"]["speed1"]);
           Serial.print("[\"speed2\"] = ");
           Serial.println(myObject["contents"]["speed2"]);
+#endif
         }
     }
     else if (strcmp(myObject["type"],"config")==0)
@@ -155,6 +154,8 @@ void dataHandle(String input) {
           init_val2 = (int) myObject["contents"]["motor2"]["init_val"];
           init_time1 = (int)myObject["contents"]["motor1"]["init_time"];
           init_time2 = (int)myObject["contents"]["motor2"]["init_time"];
+#if DEBUG
+
           Serial.print("[\"init value 1\"] = ");
           Serial.println(myObject["contents"]["motor1"]["init_val"]);
           Serial.print("[\"stand_by_value 1\"] = ");
@@ -172,7 +173,7 @@ void dataHandle(String input) {
           Serial.println(myObject["contents"]["motor2"]["init_time"]);
           Serial.print("[\"pin 2\"] = ");
           Serial.println(myObject["contents"]["motor2"]["pin"]);
-
+#endif
         }
     }
     
@@ -192,7 +193,9 @@ void loop() {
     }
   }
     if (content != "" && character == '\n') {
+#if DEBUG
       Serial.println(content);
+#endif
       dataHandle(content);
       Serial.flush();
       readingProcess =false;

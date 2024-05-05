@@ -52,148 +52,148 @@ StaticJsonDocument<200> doc;
 StaticJsonDocument<200> docOut;
 
 static const char PROGMEM INDEX_HTML[] = R"rawliteral(
+
 <html>
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
-    * {
-    touch-action: manipulation;
-  }
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin: 0px auto;
+      padding-top: 30px;
+    }
 
-* {
-    -webkit-touch-callout: none;
-    /* iOS Safari */
-    -webkit-user-select: none;
-    /* Safari */
-    -khtml-user-select: none;
-    /* Konqueror HTML */
-    -moz-user-select: none;
-    /* Old versions of Firefox */
-    -ms-user-select: none;
-    /* Internet Explorer/Edge */
-    user-select: none;
-    /* Non-prefixed version, currently
-                                supported by Chrome, Edge, Opera and Firefox */
-  }
+    table {
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-  body {
-    font-family: Arial;
-    text-align: center;
-    margin: 0px auto;
-    padding-top: 30px;
-  }
+    td {
+      padding: 8 px;
+    }
 
-  table {
-    margin-left: auto;
-    margin-right: auto;
-  }
+    input {
+      max-width: 100px;
+    }
 
-  td {
-    padding: 8 px;
-  }
-input{
-  max-width: 100px;
-}
-  .button {
-    background-color: #2f4468;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 18px;
-    margin: 6px 6px;
-    text-align: center;
-    cursor: pointer;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  }
+    .button {
+      background-color: #2f4468;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 18px;
+      margin: 6px 6px;
+      text-align: center;
+      cursor: pointer;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
 
-  .button_speed {
-    background-color: #2f4468;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    position: relative;
-    right: 50%;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 18px;
-  }
+    .button_speed {
+      background-color: #2f4468;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      position: relative;
+      right: 50%;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 18px;
+    }
 
 
-  .container {
-    display: grid;
-    margin: 0 auto;
-    max-width: fit-content;
-    grid-template-columns: 10% 80% 10%;
+    .container {
+      display: grid;
+      margin: 0 auto;
+      max-width: fit-content;
+      grid-template-columns: 10% 80% 10%;
 
-  }
-  .speed-indicator {
+    }
+
+    .speed-indicator {
       flex-grow: 1;
       height: 10px;
       background: #ccc;
       margin: 0 10px;
-  }
+    }
 
-  .noselect {
-    max-width: 200px;
-  }
-  img {
-    width: 352px;
-    max-width: 100%;
-    height: 240px;
-  }
-  ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    border: 1px solid #e7e7e7;
-    background-color: #f3f3f3;
-    width: 100%;
-    height: 40px;
-  }
-  li {
-    float: left;
-    width: 50%;
-  }
+    .noselect {
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      /* iOS Safari */
+      -webkit-user-select: none;
+      /* Safari */
+      -khtml-user-select: none;
+      /* Konqueror HTML */
+      -moz-user-select: none;
+      /* Old versions of Firefox */
+      -ms-user-select: none;
+      /* Internet Explorer/Edge */
+      user-select: none;
+      /* Non-prefixed version, currently
+                                supported by Chrome, Edge, Opera and Firefox */
+    }
 
-  li a {
-    display: block;
-    color: #666;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-  }
+    img {
+      width: 352px;
+      max-width: 100%;
+      height: 240px;
+    }
 
-  li a:hover:not(.active) {
-    background-color: #ddd;
-    font-size: 14px;
-  }
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid #e7e7e7;
+      background-color: #f3f3f3;
+      width: 100%;
+      height: 40px;
+    }
 
-  li a.active {
-    color: white;
-    background-color: #737b7b;
-    font-size: 14px;
-    
-  }
+    li {
+      float: left;
+      width: 50%;
+    }
+
+    li a {
+      display: block;
+      color: #666;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    li a:hover:not(.active) {
+      background-color: #ddd;
+      font-size: 14px;
+    }
+
+    li a.active {
+      color: white;
+      background-color: #737b7b;
+      font-size: 14px;
+
+    }
   </style>
 </head>
 
 <body>
   <script>
     let obj = {
-      "type":"control",
-      "contents":{
+      "type": "control",
+      "contents": {
         'direct': 'stop',
         'speed1': 50,
         'speed2': 50
@@ -217,35 +217,35 @@ input{
       }
     }
     function speedControl1(param1) {
-      let speed  = obj.contents.speed1 + param1;
+      let speed = obj.contents.speed1 + param1;
       if (speed >= 0 && speed <= 255) {
         obj.contents.speed1 += param1;
       }
-        document.getElementById("textSliderValue1").innerHTML = "MOTOR 1: " + obj.contents.speed1;
+      document.getElementById("textSliderValue1").innerHTML = "MOTOR 1: " + obj.contents.speed1;
     }
     function speedControl2(param2) {
-      let speed  = obj.contents.speed2 + param2;
+      let speed = obj.contents.speed2 + param2;
       if (speed >= 0 && speed <= 255) {
         obj.contents.speed2 += param2;
-        
+
       }
       document.getElementById("textSliderValue2").innerHTML = "MOTOR 2: " + obj.contents.speed2;
     }
     async function submitConfig() {
       let obj = {
-        "type":"config",
-        "contents":{
-          "motor1":{
+        "type": "config",
+        "contents": {
+          "motor1": {
             "init_val": Number(document.getElementById("init_val_1").value),
             "stand_by_value": Number(document.getElementById("stand_by_val_1").value),
-            "init_time":Number(document.getElementById("init_time_1").value),
-            "pin":Number(document.getElementById("pin_1").value)
+            "init_time": Number(document.getElementById("init_time_1").value),
+            "pin": Number(document.getElementById("pin_1").value)
           },
-          "motor2":{
+          "motor2": {
             "init_val": Number(document.getElementById("init_val_2").value),
             "stand_by_value": Number(document.getElementById("stand_by_val_2").value),
-            "init_time":Number(document.getElementById("init_time_2").value),
-            "pin":Number(document.getElementById("pin_2").value)
+            "init_time": Number(document.getElementById("init_time_2").value),
+            "pin": Number(document.getElementById("pin_2").value)
           }
         }
       }
@@ -266,84 +266,83 @@ input{
   </script>
   <img src="" id="photo">
   <div class="container">
-    <div>
-      <button class="button_speed"  ontouchstart="speedControl1(-5)" >-</button>
+    <div class="noselect">
+      <button class="button_speed" ontouchstart="speedControl1(-5)">-</button>
     </div>
     <div class="noselect">
-      <p><span id="textSliderValue1" > MOTOR 1: 50</span></p>
+      <p><span id="textSliderValue1"> MOTOR 1: 50</span></p>
     </div>
 
-    <div>
+    <div class="noselect">
       <button class="button_speed" id="speed-up" ontouchstart="speedControl1(5)">+</button>
     </div>
   </div>
 
   <div class="container">
     <div>
-      <button class="button_speed"  ontouchstart="speedControl2(-5)" >-</button>
+      <button class="button_speed" ontouchstart="speedControl2(-5)">-</button>
     </div>
     <div class="noselect">
-      <p><span id="textSliderValue2" > MOTOR 2: 50</span></p>
+      <p><span id="textSliderValue2"> MOTOR 2: 50</span></p>
     </div>
 
-    <div>
+    <div class="noselect">
       <button class="button_speed" id="speed-up" ontouchstart="speedControl2(5)">+</button>
     </div>
 
   </div>
 
-  <table>
+  <table class="noselect">
     <tr>
       <td colspan="3" align="center"><button class="button" onmousedown="driectControl('forward');"
           ontouchstart="driectControl('forward');" onmouseup="driectControl('stop');"
           ontouchend="driectControl('stop');">Forward</button></td>
     </tr>
     <tr>
-      <td ><button class="button" ontouchstart="driectControl('left');"
-          ontouchend="driectControl('stop');">Left</button></td>
-      <td ><button class="button" ontouchstart="driectControl('stop');"
+      <td><button class="button" ontouchstart="driectControl('left');" ontouchend="driectControl('stop');">Left</button>
+      </td>
+      <td><button class="button" ontouchstart="driectControl('stop');"
           ontouchstart="driectControl('stop');">Stop</button></td>
-      <td ><button class="button" ontouchstart="driectControl('right');"
+      <td><button class="button" ontouchstart="driectControl('right');"
           ontouchend="driectControl('stop');">Right</button></td>
     </tr>
+
+  </table>
+  <table class="noselect">
     <tr>
+      <td class="noselect"> MOTOR 1 </td>
+      <td class="noselect" > MOTOR 2 </td>
     </tr>
   </table>
   <table>
     <tr>
-      <td class="title" > MOTOR 1 </td>
-      <td class="title"> MOTOR 2 </td>
+      <td class="noselect"> Initial value: </td>
+      <td> <input type="number" id="init_val_1" placeholder="150" min="0" max="180" value="150"> </td>
+      <td class="noselect"> Initial value: </td>
+      <td> <input type="number" id="init_val_2" placeholder="150" min="0" max="180" value="150"> </td>
     </tr>
-    <table></table>
-    <table>
-      <tr>
-        <td class="cl_title"> Initial value: </td>
-        <td> <input type="number" id="init_val_1" placeholder="150" min="0" max="180" value="150"> </td>
-        <td class="cl_title"> Initial value: </td>
-        <td> <input type="number" id="init_val_2" placeholder="150" min="0" max="180" value="150"> </td>
-      </tr>
-      <tr>
-        <td> Stand by value:</td>
-        <td> <input type="number" id="stand_by_val_1" placeholder="20" min="0" max="180" value="20"> </td>
-        <td> Stand by value:</td>
-        <td> <input type="number" id="stand_by_val_2" placeholder="20" min="0" max="180" value="20"> </td>
-      </tr>
-      <tr>
-        <td> Launch delay (ms):</td>
-        <td> <input type="number" id="init_time_1" placeholder="200" min="0" max="500" value="200"> </td>
-        <td> Launch delay (ms): </td>
-        <td> <input type="number" id="init_time_2" placeholder="200" min="0" max="500" value="200"> </td>
-      </tr>
-      <tr>
-        <td>Pin motor: </td>
-        <td> <input type="number" id="pin_1" placeholder="3" min="0" max="80" value ="3"> </td>
-        <td>Pin motor: </td>
-        <td> <input type="number" id="pin_2" placeholder="5" min="0" max="80" value="5"> </td>
-      </tr>
-    </table>
-    <div id="bt">
-      <button class="button" onclick="submitConfig()">Submit</button>
-    </div>
+    <tr>
+      <td class="noselect"> Stand by value:</td>
+      <td> <input type="number" id="stand_by_val_1" placeholder="20" min="0" max="180" value="20"> </td>
+      <td class="noselect"> Stand by value:</td>
+      <td> <input type="number" id="stand_by_val_2" placeholder="20" min="0" max="180" value="20"> </td>
+    </tr>
+    <tr>
+      <td class="noselect"> Launch delay (ms):</td>
+      <td> <input type="number" id="init_time_1" placeholder="200" min="0" max="500" value="200"> </td>
+      <td class="noselect"> Launch delay (ms): </td>
+      <td> <input type="number" id="init_time_2" placeholder="200" min="0" max="500" value="200"> </td>
+    </tr>
+    <tr>
+      <td class="noselect">Pin motor: </td>
+      <td> <input type="number" id="pin_1" placeholder="3" min="0" max="80" value="3"> </td>
+      <td class="noselect">Pin motor: </td>
+      <td> <input type="number" id="pin_2" placeholder="5" min="0" max="80" value="5"> </td>
+    </tr>
+  </table>
+  <div id="bt" class="noselect">
+    <button class="button" class="noselect" onclick="submitConfig()">Submit</button>
+  </div>
   <script>
     window.onload = document.getElementById("photo").src = "http://tankServer.local:81/stream";
   </script>
